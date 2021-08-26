@@ -9,6 +9,8 @@ import java.util.List;
 public class CustomerGetDb implements CustomerService {
 
 
+    public static final String CUSTOMER = "select * from customer;";
+
     public Connection getConnection(){
         Connection connection = null;
         try {
@@ -31,7 +33,7 @@ public class CustomerGetDb implements CustomerService {
         Connection connection = getConnection();
         List<Customer> customers = new ArrayList<>();
         try {
-            PreparedStatement statement = connection.prepareStatement("select * from customer;");
+            PreparedStatement statement = connection.prepareStatement(CUSTOMER);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()){
                 int id = resultSet.getInt("id");
@@ -67,7 +69,24 @@ public class CustomerGetDb implements CustomerService {
 
     @Override
     public Customer findById(int id) {
-        return null;
+        Customer customer = null;
+        Connection connection = getConnection();
+        try {
+            CallableStatement statement = connection.prepareCall("call get_customer_by_id(?)");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String address = resultSet.getString("address");
+                customer = new Customer(name, email, address);
+            }
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return customer;
     }
 
     @Override

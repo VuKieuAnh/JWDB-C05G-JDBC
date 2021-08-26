@@ -18,6 +18,10 @@ import java.util.List;
 public class CustomerController extends HttpServlet {
     private CustomerService service = new CustomerGetDb();
 
+    public void init(){
+
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("page");
